@@ -1,0 +1,216 @@
+/* Figma-specific styles extracted from your export */
+
+:root {
+  --file-grid-tile-min-width: 272px;
+  --color-bg: white;
+  --fallback-color-bg: white;
+  --color-bg-secondary: #f0f0f0;
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-bg-toolbar: #2C2C2C;
+  --color-bg-brand: #0D99FF;
+}
+
+.figma-content {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* PAGE LAYOUT STYLES */
+.fb-page-layout {
+  background-color: var(--color-bg, var(--fallback-color-bg, white));
+}
+
+.fb-flex-row {
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+}
+
+.fb-sidebar {
+  width: 264px;
+  padding-top: 4px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg, white);
+}
+
+.fb-sidebar > :nth-last-child(2) {
+  opacity: 0.6;
+}
+
+.fb-sidebar > :nth-last-child(1) {
+  opacity: 0.3;
+}
+
+.fb-page {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  border-left: 1px var(--color-border) solid;
+}
+
+.fb-page-content-columns {
+  overflow: hidden;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+.fb-page-content {
+  flex-grow: 1;
+  overflow: hidden;
+  position: relative;
+  margin-right: 32px;
+}
+
+.fb-fading-content {
+  margin-left: 32px;
+}
+
+.fb-fading-content:after {
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  content: "";
+  background: linear-gradient(to bottom, transparent 50%, var(--color-bg) 100%);
+  pointer-events: none;
+}
+
+/* SIDEBAR STYLES */
+.fb-sidebar-account-and-notifications {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.fb-sidebar-searchbar {
+  padding: 0 8px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.fb-sidebar-row {
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.fb-sidebar-row :nth-child(2) {
+  margin-left: 12px;
+}
+
+.fb-divider {
+  height: 1px;
+  background-color: var(--color-border, rgba(0, 0, 0, 0.1));
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 10px;
+}
+
+/* Skeleton Item Styles */
+.fb-shrink-0 {
+  flex-shrink: 0;
+}
+
+.fb-circle-16 {
+  flex-shrink: 0;
+  background-color: var(--color-bg-secondary, #f0f0f0);
+  height: 16px;
+  width: 16px;
+  border-radius: 9999px;
+}
+
+.fb-circle-24 {
+  background-color: var(--color-bg-secondary, #f0f0f0);
+  height: 24px;
+  width: 24px;
+  border-radius: 9999px;
+}
+
+.fb-rectangle-16 {
+  background-color: var(--color-bg-secondary);
+  height: 16px;
+  border-radius: 3px;
+}
+
+.fb-rectangle-32 {
+  background-color: var(--color-bg-secondary);
+  height: 32px;
+  border-radius: 8px;
+}
+
+/* Width utilities */
+.fb-width-16 { width: 16px; }
+.fb-width-60 { width: 60px; }
+.fb-width-70 { width: 70px; }
+.fb-width-80 { width: 80px; }
+.fb-width-88 { width: 88px; }
+.fb-width-100 { width: 100px; }
+.fb-width-105 { width: 105px; }
+.fb-width-115 { width: 115px; }
+.fb-width-120 { width: 120px; }
+.fb-width-full { width: 100%; }
+
+/* Header Styles */
+.fb-toolbar-48 {
+  border-bottom: 1px var(--color-border, #e5e5e5) solid;
+  height: 48px;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding-left: 32px;
+}
+
+/* Tile Grid */
+.fb-tile-grid {
+  display: grid;
+  gap: 32px;
+  justify-items: stretch;
+  grid-template-columns: repeat(auto-fill, minmax(var(--file-grid-tile-min-width), 1fr));
+}
+
+.fb-tile-grid-top-padding {
+  margin-top: 24px;
+}
+
+.fb-card {
+  border: 1px solid var(--color-border);
+  border-radius: 13px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.fb-file-thumbnail {
+  background-color: var(--color-bg-secondary);
+  aspect-ratio: 16 / 9;
+}
+
+.fb-file-card-footer {
+  border-top: 1px solid var(--color-border);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.fb-file-card-footer-text-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Responsive */
+@media (max-width: 645px) {
+  .fb-sidebar {
+    display: none;
+  }
+  
+  .fb-tile-grid {
+    grid-template-columns: 100%;
+  }
+}
