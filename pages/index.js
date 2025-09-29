@@ -125,10 +125,75 @@ const DashboardPage = ({ isSeatingAvailable, setIsSeatingAvailable }) => (
 const WaitingManagementPage = () => (
   <div className={styles.dashboardPage}>
     <div className={styles.dashboardHeader}>
-      <h1 className={styles.dashboardTitle}>候位管理</h1>
+      <div className={styles.dashboardIconContainer}>
+        <Image 
+          src="/dashboard-icon.png" 
+          alt="候位清單圖示" 
+          width={48}
+          height={48}
+          className={styles.dashboardIcon}
+          onError={() => console.log('Image failed to load')}
+        />
+      </div>
+      <h1 className={styles.dashboardTitle}>候位清單</h1>
     </div>
     <div className={styles.dashboardContent}>
-      <p>候位管理功能開發中...</p>
+      <div className={styles.waitingListSection}>
+        <div className={styles.waitingListTable}>
+          <div className={styles.tableHeader}>
+            <div className={styles.tableHeaderCell}>號碼牌</div>
+            <div className={styles.tableHeaderCell}>姓名</div>
+            <div className={styles.tableHeaderCell}>聯絡方式</div>
+            <div className={styles.tableHeaderCell}>狀態</div>
+            <div className={styles.tableHeaderCell}>倒數計時</div>
+            <div className={styles.tableHeaderCell}>操作</div>
+          </div>
+          
+          <div className={styles.tableBody}>
+            <div className={styles.tableRow}>
+              <div className={styles.tableCell}>A001</div>
+              <div className={styles.tableCell}>王小明</div>
+              <div className={styles.tableCell}>0912-345-678</div>
+              <div className={styles.tableCell}>
+                <span className={styles.statusWaiting}>等待中</span>
+              </div>
+              <div className={styles.tableCell}>05:30</div>
+              <div className={styles.tableCell}>
+                <button className={styles.actionBtn}>通知</button>
+                <button className={styles.actionBtn}>取消</button>
+              </div>
+            </div>
+            
+            <div className={styles.tableRow}>
+              <div className={styles.tableCell}>A002</div>
+              <div className={styles.tableCell}>李小華</div>
+              <div className={styles.tableCell}>0987-654-321</div>
+              <div className={styles.tableCell}>
+                <span className={styles.statusNotified}>已通知</span>
+              </div>
+              <div className={styles.tableCell}>02:15</div>
+              <div className={styles.tableCell}>
+                <button className={styles.actionBtn}>完成</button>
+                <button className={styles.actionBtn}>取消</button>
+              </div>
+            </div>
+            
+            <div className={styles.tableRow}>
+              <div className={styles.tableCell}>A003</div>
+              <div className={styles.tableCell}>張小美</div>
+              <div className={styles.tableCell}>0956-123-456</div>
+              <div className={styles.tableCell}>
+                <span className={styles.statusWaiting}>等待中</span>
+              </div>
+              <div className={styles.tableCell}>12:45</div>
+              <div className={styles.tableCell}>
+                <button className={styles.actionBtn}>通知</button>
+                <button className={styles.actionBtn}>取消</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 )
@@ -204,6 +269,9 @@ const SettingsPage = () => (
     </div>
   </div>
 )
+
+
+
 
 // Page Content Renderer
 const renderPageContent = (activeItem, isSeatingAvailable, setIsSeatingAvailable) => {

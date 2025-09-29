@@ -316,6 +316,103 @@
   margin-left: 16px;
 }
 
+.waitingListSection {
+  margin-top: 2rem;
+}
+
+.waitingListTable {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 2fr 1fr 1fr 1.5fr;
+  background-color: #f5f5f5;
+  font-weight: bold;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.tableHeaderCell {
+  padding: 1rem;
+  text-align: center;
+  border-right: 1px solid #e0e0e0;
+  color: #000000;
+}
+
+.tableHeaderCell:last-child {
+  border-right: none;
+}
+
+.tableBody {
+  /* No specific styles needed, rows will be styled individually */
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 2fr 1fr 1fr 1.5fr;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.tableRow:hover {
+  background-color: #f9f9f9;
+}
+
+.tableCell {
+  padding: 1rem;
+  text-align: center;
+  border-right: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+}
+
+.tableCell:last-child {
+  border-right: none;
+}
+
+.statusWaiting {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.statusNotified {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.actionBtn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.375rem 0.75rem;
+  margin: 0 0.25rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.actionBtn:hover {
+  background-color: #0056b3;
+}
+
+.actionBtn:last-child {
+  background-color: #dc3545;
+}
+
+.actionBtn:last-child:hover {
+  background-color: #c82333;
+}
+
 @media (max-width: 768px) {
   .statsGrid {
     grid-template-columns: 1fr;
