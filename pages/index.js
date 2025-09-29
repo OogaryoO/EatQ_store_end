@@ -1,10 +1,16 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import styles from '../styles/Dashboard.module.css'
 
+// Import Firebase services
+import { database, firestore } from '../lib/firebase'
+import { ref, onValue, set } from 'firebase/database'
+import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore'
+import { updateSeatingStatus, addToWaitingList, updateWaitingListStatus, removeFromWaitingList, generateTicketNumber } from '../lib/firebaseService'
+
 // Dashboard Page Component
-const DashboardPage = ({ isSeatingAvailable, setIsSeatingAvailable }) => (
+const DashboardPage = ({ isSeatingAvailable, setIsSeatingAvailable, waitingCount, averageWaitTime, lastNotificationTime }) => (
   <div className={styles.dashboardPage}>
     <div className={styles.dashboardHeader}>
       <div className={styles.dashboardIconContainer}>
@@ -25,7 +31,13 @@ const DashboardPage = ({ isSeatingAvailable, setIsSeatingAvailable }) => (
         <div className={styles.statusButtons}>
           <button 
             className={`${styles.statusButton} ${isSeatingAvailable ? styles.available : styles.full}`}
-            onClick={() => setIsSeatingAvailable(!isSeatingAvailable)}
+            onClick={async () => {
+              try {
+                await updateSeatingStatus(!isSeatingAvailable);
+              } catch (error) {
+                console.error('Failed to update seating status:', error);
+              }
+            }}
           >
             {isSeatingAvailable ? '有空位' : '客滿'}
           </button>
@@ -41,7 +53,7 @@ const DashboardPage = ({ isSeatingAvailable, setIsSeatingAvailable }) => (
             <div className={styles.statContent}>
               <div className={styles.statText}>
                 <div className={styles.statTitle}>今日候位人數</div>
-                <div className={styles.statNumber}>42</div>
+                <div className={styles.statNumber}>{waitingCount}</div>
               </div>
               <div className={`${styles.statIcon} ${styles.peopleIcon}`}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -55,7 +67,7 @@ const DashboardPage = ({ isSeatingAvailable, setIsSeatingAvailable }) => (
             <div className={styles.statContent}>
               <div className={styles.statText}>
                 <div className={styles.statTitle}>平均等待時間</div>
-                <div className={styles.statNumber}>18 <span className={styles.statUnit}>分鐘</span></div>
+                <div className={styles.statNumber}>{averageWaitTime} <span className={styles.statUnit}>分鐘</span></div>
               </div>
               <div className={`${styles.statIcon} ${styles.clockIcon}`}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -70,7 +82,7 @@ const DashboardPage = ({ isSeatingAvailable, setIsSeatingAvailable }) => (
             <div className={styles.statContent}>
               <div className={styles.statText}>
                 <div className={styles.statTitle}>最近一次通知時間</div>
-                <div className={styles.statNumber}>13:42</div>
+                <div className={styles.statNumber}>{lastNotificationTime}</div>
               </div>
               <div className={`${styles.statIcon} ${styles.bellIcon}`}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -106,7 +118,7 @@ const DashboardPage = ({ isSeatingAvailable, setIsSeatingAvailable }) => (
                 <div className={styles.waitingTitle}>目前候位狀態</div>
                 <div className={styles.waitingNumber}>
                   <p>目前共有</p>
-                  3
+                  {waitingCount}
                   <p>組客人等待中</p>
                 </div>
               </div>
@@ -122,7 +134,49 @@ const DashboardPage = ({ isSeatingAvailable, setIsSeatingAvailable }) => (
 )
 
 // Waiting Management Page Component
-const WaitingManagementPage = () => (
+const WaitingManagementPage = ({ waitingList, setWaitingList }) => {
+  
+  const handleNotifyCustomer = async (customerId) => {
+    try {
+      await updateWaitingListStatus(customerId, 'notified');
+      console.log('Customer notified successfully');
+    } catch (error) {
+      console.error('Failed to notify customer:', error);
+    }
+  };
+
+  const handleCompleteCustomer = async (customerId) => {
+    try {
+      await removeFromWaitingList(customerId);
+      console.log('Customer completed successfully');
+    } catch (error) {
+      console.error('Failed to complete customer:', error);
+    }
+  };
+
+  const handleCancelCustomer = async (customerId) => {
+    try {
+      await removeFromWaitingList(customerId);
+      console.log('Customer cancelled successfully');
+    } catch (error) {
+      console.error('Failed to cancel customer:', error);
+    }
+  };
+
+  const formatWaitTime = (createdAt) => {
+    if (!createdAt) return '00:00';
+    
+    const now = new Date();
+    const created = createdAt.toDate ? createdAt.toDate() : new Date(createdAt);
+    const diffMs = now - created;
+    const diffMins = Math.floor(diffMs / 60000);
+    const hours = Math.floor(diffMins / 60);
+    const minutes = diffMins % 60;
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  };
+
+  return (
   <div className={styles.dashboardPage}>
     <div className={styles.dashboardHeader}>
       <div className={styles.dashboardIconContainer}>
@@ -150,53 +204,65 @@ const WaitingManagementPage = () => (
           </div>
           
           <div className={styles.tableBody}>
-            <div className={styles.tableRow}>
-              <div className={styles.tableCell}>A001</div>
-              <div className={styles.tableCell}>王小明</div>
-              <div className={styles.tableCell}>0912-345-678</div>
-              <div className={styles.tableCell}>
-                <span className={styles.statusWaiting}>等待中</span>
+            {waitingList.map((customer) => (
+              <div key={customer.id} className={styles.tableRow}>
+                <div className={styles.tableCell}>{customer.ticketNumber}</div>
+                <div className={styles.tableCell}>{customer.name}</div>
+                <div className={styles.tableCell}>{customer.phone}</div>
+                <div className={styles.tableCell}>
+                  <span className={customer.status === 'waiting' ? styles.statusWaiting : styles.statusNotified}>
+                    {customer.status === 'waiting' ? '等待中' : '已通知'}
+                  </span>
+                </div>
+                <div className={styles.tableCell}>{formatWaitTime(customer.createdAt)}</div>
+                <div className={styles.tableCell}>
+                  {customer.status === 'waiting' ? (
+                    <>
+                      <button 
+                        className={styles.actionBtn}
+                        onClick={() => handleNotifyCustomer(customer.id)}
+                      >
+                        通知
+                      </button>
+                      <button 
+                        className={styles.actionBtn}
+                        onClick={() => handleCancelCustomer(customer.id)}
+                      >
+                        取消
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button 
+                        className={styles.actionBtn}
+                        onClick={() => handleCompleteCustomer(customer.id)}
+                      >
+                        完成
+                      </button>
+                      <button 
+                        className={styles.actionBtn}
+                        onClick={() => handleCancelCustomer(customer.id)}
+                      >
+                        取消
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
-              <div className={styles.tableCell}>05:30</div>
-              <div className={styles.tableCell}>
-                <button className={styles.actionBtn}>通知</button>
-                <button className={styles.actionBtn}>取消</button>
+            ))}
+            {waitingList.length === 0 && (
+              <div className={styles.tableRow}>
+                <div className={styles.tableCell} style={{textAlign: 'center', padding: '20px'}} colSpan="6">
+                  目前沒有候位客人
+                </div>
               </div>
-            </div>
-            
-            <div className={styles.tableRow}>
-              <div className={styles.tableCell}>A002</div>
-              <div className={styles.tableCell}>李小華</div>
-              <div className={styles.tableCell}>0987-654-321</div>
-              <div className={styles.tableCell}>
-                <span className={styles.statusNotified}>已通知</span>
-              </div>
-              <div className={styles.tableCell}>02:15</div>
-              <div className={styles.tableCell}>
-                <button className={styles.actionBtn}>完成</button>
-                <button className={styles.actionBtn}>取消</button>
-              </div>
-            </div>
-            
-            <div className={styles.tableRow}>
-              <div className={styles.tableCell}>A003</div>
-              <div className={styles.tableCell}>張小美</div>
-              <div className={styles.tableCell}>0956-123-456</div>
-              <div className={styles.tableCell}>
-                <span className={styles.statusWaiting}>等待中</span>
-              </div>
-              <div className={styles.tableCell}>12:45</div>
-              <div className={styles.tableCell}>
-                <button className={styles.actionBtn}>通知</button>
-                <button className={styles.actionBtn}>取消</button>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
     </div>
   </div>
-)
+)}
 
 // Business Hours Page Component  
 const BusinessHoursPage = () => (
@@ -274,12 +340,12 @@ const SettingsPage = () => (
 
 
 // Page Content Renderer
-const renderPageContent = (activeItem, isSeatingAvailable, setIsSeatingAvailable) => {
+const renderPageContent = (activeItem, isSeatingAvailable, setIsSeatingAvailable, waitingList, setWaitingList, waitingCount, averageWaitTime, lastNotificationTime) => {
   switch (activeItem) {
     case '控制台':
-      return <DashboardPage isSeatingAvailable={isSeatingAvailable} setIsSeatingAvailable={setIsSeatingAvailable} />
+      return <DashboardPage isSeatingAvailable={isSeatingAvailable} setIsSeatingAvailable={setIsSeatingAvailable} waitingCount={waitingCount} averageWaitTime={averageWaitTime} lastNotificationTime={lastNotificationTime} />
     case '候位管理':
-      return <WaitingManagementPage />
+      return <WaitingManagementPage waitingList={waitingList} setWaitingList={setWaitingList} />
     case '營業時間':
       return <BusinessHoursPage />
     case '菜單管理':
@@ -293,13 +359,17 @@ const renderPageContent = (activeItem, isSeatingAvailable, setIsSeatingAvailable
     case '設定':
       return <SettingsPage />
     default:
-      return <DashboardPage isSeatingAvailable={isSeatingAvailable} setIsSeatingAvailable={setIsSeatingAvailable} />
+      return <DashboardPage isSeatingAvailable={isSeatingAvailable} setIsSeatingAvailable={setIsSeatingAvailable} waitingCount={waitingCount} averageWaitTime={averageWaitTime} lastNotificationTime={lastNotificationTime} />
   }
 }
 
 export default function Home() {
   const [activeItem, setActiveItem] = useState('控制台')
   const [isSeatingAvailable, setIsSeatingAvailable] = useState(true)
+  const [waitingList, setWaitingList] = useState([])
+  const [waitingCount, setWaitingCount] = useState(0)
+  const [averageWaitTime, setAverageWaitTime] = useState(18)
+  const [lastNotificationTime, setLastNotificationTime] = useState('13:42')
   
   const menuItems = [
     '控制台',
@@ -311,6 +381,52 @@ export default function Home() {
     'QR code',
     '設定'
   ]
+
+  // Firebase real-time listeners
+  useEffect(() => {
+    // Listen for seating availability changes
+    const seatingRef = ref(database, 'restaurant/seatingAvailable');
+    const unsubscribeSeating = onValue(seatingRef, (snapshot) => {
+      const status = snapshot.val();
+      if (status !== null) {
+        setIsSeatingAvailable(status);
+      }
+    });
+
+    // Listen for waiting list changes using Firestore
+    const waitingListRef = collection(firestore, 'waitingList');
+    const unsubscribeWaiting = onSnapshot(waitingListRef, (snapshot) => {
+      const waitingData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setWaitingList(waitingData);
+      setWaitingCount(waitingData.length);
+      
+      // Update last notification time if there's a recent notification
+      const recentNotified = waitingData.find(item => item.status === 'notified' && item.notifiedAt);
+      if (recentNotified && recentNotified.notifiedAt) {
+        const notifiedTime = new Date(recentNotified.notifiedAt.toDate());
+        setLastNotificationTime(notifiedTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' }));
+      }
+    });
+
+    // Listen for statistics changes
+    const statsRef = ref(database, 'statistics/averageWaitTime');
+    const unsubscribeStats = onValue(statsRef, (snapshot) => {
+      const avgTime = snapshot.val();
+      if (avgTime !== null) {
+        setAverageWaitTime(avgTime);
+      }
+    });
+
+    // Cleanup listeners on unmount
+    return () => {
+      unsubscribeSeating();
+      unsubscribeWaiting();
+      unsubscribeStats();
+    };
+  }, []);
 
   return (
     <>
@@ -342,7 +458,7 @@ export default function Home() {
         </div>
         
         <div className={styles.mainContent}>    
-          {renderPageContent(activeItem, isSeatingAvailable, setIsSeatingAvailable)}
+          {renderPageContent(activeItem, isSeatingAvailable, setIsSeatingAvailable, waitingList, setWaitingList, waitingCount, averageWaitTime, lastNotificationTime)}
         </div>
       </div>
     </>
