@@ -27,6 +27,7 @@
 .appContainer {
   display: flex;
   height: 100vh;
+  overflow: hidden;
 }
 
 .sidebar {
@@ -34,6 +35,12 @@
   background-color: #ffffff;
   border-right: 1px solid #e9ecef;
   padding: 20px 0;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 10;
 }
 
 .sidebarItem {
@@ -57,8 +64,11 @@
 
 .mainContent {
   flex: 1;
+  margin-left: 250px;
   padding: 20px;
   background-color: #f8f9fa;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .dashboardPage {
@@ -347,7 +357,7 @@
 }
 
 .tableBody {
-  /* No specific styles needed, rows will be styled individually */
+  background-color: #ffffff;
 }
 
 .tableRow {
@@ -421,4 +431,602 @@
   .actionGrid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Business Hours Page Styles */
+.todayHoursDisplay {
+  padding: 20px 24px;
+  background-color: #f5ae39;
+  color: #ffffff;
+  border-radius: 6px;
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.scheduleTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333333;
+  margin: 0 0 8px 0;
+}
+
+.scheduleSubtitle {
+  font-size: 14px;
+  color: #999999;
+  margin: 0 0 20px 0;
+}
+
+.toggleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.toggleLabel {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333333;
+}
+
+.toggle {
+  position: relative;
+  width: 56px;
+  height: 32px;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.toggleOff {
+  background-color: #e0e0e0;
+}
+
+.toggleOn {
+  background-color: #28a745;
+}
+
+.toggleSlider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: white;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggleOn .toggleSlider {
+  transform: translateX(24px);
+}
+
+.timeInputsContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.timeInputGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeInputLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666666;
+  margin-bottom: 8px;
+}
+
+.timeInputField {
+  padding: 10px 12px;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 16px;
+  color: #333333;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+}
+
+.timeInputField:focus {
+  border-color: #f5ae39;
+  box-shadow: 0 0 0 2px rgba(245, 174, 57, 0.1);
+}
+
+.saveButtonSection {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+  padding-top: 24px;
+  border-top: 1px solid #e9ecef;
+}
+
+.saveButton {
+  padding: 12px 48px;
+  background-color: #f5ae39;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.saveButton:hover {
+  background-color: #e09d2a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.saveButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Special Date Settings Styles */
+.specialDateForm {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.specialDateInputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  flex: 1;
+}
+
+.specialDateInputGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.addSpecialDateButton {
+  padding: 10px 32px;
+  background-color: #f5ae39;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 42px;
+  align-self: flex-end;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.addSpecialDateButton:hover {
+  background-color: #e09d2a;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.addSpecialDateButton:active {
+  transform: translateY(0);
+}
+
+.specialDatesList {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.specialDateItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background-color: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.specialDateItem:hover {
+  border-color: #f5ae39;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.specialDateInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.specialDateDate {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333333;
+  min-width: 100px;
+}
+
+.specialDateDescription {
+  font-size: 14px;
+  color: #666666;
+  flex: 1;
+}
+
+.specialDateOpen {
+  padding: 4px 12px;
+  background-color: #d4edda;
+  color: #155724;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.specialDateClosed {
+  padding: 4px 12px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.specialDateTime {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333333;
+}
+
+.deleteButton {
+  padding: 6px 16px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.deleteButton:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
+}
+
+.deleteButton:active {
+  transform: translateY(0);
+}
+
+/* Notification Sending Page Styles */
+.notificationHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.backButton {
+  padding: 10px 20px;
+  background-color: #f5ae39;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.backButton:hover {
+  background-color: #e09a2a;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(245, 174, 57, 0.3);
+}
+
+.headerTitleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.headerSubtitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: #999999;
+}
+
+.waitingCountCard {
+  background-color: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px 24px;
+  text-align: center;
+  min-width: 160px;
+}
+
+.countLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666666;
+  margin-bottom: 8px;
+}
+
+.countNumber {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333333;
+}
+
+.countUnit {
+  font-size: 18px;
+  font-weight: 500;
+  color: #666666;
+}
+
+/* Templates Section */
+.templatesSection {
+  margin-bottom: 24px;
+}
+
+.templatesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.templateCategory {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.templateCategoryTitle {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333333;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.templateExamples {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.templateCard {
+  background-color: #ffffff;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.templateCard:hover {
+  border-color: #f5ae39;
+  box-shadow: 0 2px 8px rgba(245, 174, 57, 0.15);
+}
+
+.templateCardSelected {
+  border-color: #f5ae39;
+  background-color: #fffbf5;
+}
+
+.templateText {
+  flex: 1;
+  font-size: 14px;
+  color: #333333;
+  line-height: 1.5;
+}
+
+.useTemplateButton {
+  padding: 6px 16px;
+  background-color: #f5ae39;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.useTemplateButton:hover {
+  background-color: #e09a2a;
+}
+
+/* Custom Announcement Section */
+.customAnnouncementSection {
+  margin-top: 24px;
+}
+
+.customAnnouncementCard {
+  background-color: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.formGroup {
+  margin-bottom: 24px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 8px;
+}
+
+.messageTextarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #333333;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.messageTextarea:focus {
+  outline: none;
+  border-color: #f5ae39;
+}
+
+.messageTextarea::placeholder {
+  color: #999999;
+}
+
+.imageUploadArea {
+  border: 2px dashed #e9ecef;
+  border-radius: 6px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.imageUploadArea:hover {
+  border-color: #f5ae39;
+  background-color: #fffbf5;
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadLabel {
+  cursor: pointer;
+  display: block;
+}
+
+.uploadPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #999999;
+}
+
+.uploadPlaceholder svg {
+  opacity: 0.5;
+}
+
+.uploadPlaceholder span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.uploadedFileInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #333333;
+}
+
+.uploadedFileInfo svg {
+  color: #f5ae39;
+}
+
+.uploadedFileInfo span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dateTimeInput {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #333333;
+  transition: border-color 0.2s ease;
+}
+
+.dateTimeInput:focus {
+  outline: none;
+  border-color: #f5ae39;
+}
+
+.formHint {
+  margin: 8px 0 0 0;
+  font-size: 12px;
+  color: #999999;
+}
+
+.sendButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.sendButton {
+  padding: 14px 32px;
+  background-color: #f5ae39;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sendButton:hover:not(:disabled) {
+  background-color: #e09a2a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 174, 57, 0.3);
+}
+
+.sendButton:disabled {
+  background-color: #e9ecef;
+  color: #999999;
+  cursor: not-allowed;
 }
