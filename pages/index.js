@@ -14,18 +14,7 @@ import BusinessHoursPage from '../components/BusinessHoursPage'
 import MenuManagementPage from '@/components/MenuManagementPage'
 import AnnouncementsPage from '@/components/AnnouncementsPage'
 import NotificationSendingPage from '@/components/NotificationSendingPage'
-
-// QR Code Page Component
-const QRCodePage = () => (
-  <div className={styles.dashboardPage}>
-    <div className={styles.dashboardHeader}>
-      <h1 className={styles.dashboardTitle}>QR code</h1>
-    </div>
-    <div className={styles.dashboardContent}>
-      <p>QR code 管理功能開發中...</p>
-    </div>
-  </div>
-)
+import QRCodePage from '@/components/QRCodePage'
 
 // Settings Page Component
 const SettingsPage = () => (
