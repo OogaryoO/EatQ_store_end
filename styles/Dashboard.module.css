@@ -121,32 +121,56 @@
   color: #333333;
 }
 
+.statusControls {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .statusButtons {
   display: flex;
   gap: 12px;
   align-items: center;
 }
 
+.notifyNextButton {
+  margin-left: auto;
+  padding: 12px 32px;
+  background-color: #f5ae39;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(245, 174, 57, 0.3);
+}
+
+.notifyNextButton:hover {
+  background-color: #e69d28;
+  box-shadow: 0 4px 8px rgba(245, 174, 57, 0.4);
+  transform: translateY(-1px);
+}
+
+.notifyNextButton:active {
+  transform: translateY(0);
+}
+
 .statusButton {
   padding: 12px 24px;
-  border: none;
+  border: 2px solid transparent;
   border-radius: 6px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  opacity: 0.5;
 }
 
-.actionButton {
-  padding: 12px 24px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  background-color: #f8f9fa;
-  border: 2px solid #e9ecef;
-  color: #333333;
-  text-align: center;
-  min-width: 120px;
+.statusButton.active {
+  opacity: 1;
+  border-color: currentColor;
 }
 
 .statusButton.available {
@@ -156,6 +180,12 @@
 
 .statusButton.available:hover {
   background-color: #218838;
+  opacity: 0.8;
+}
+
+.statusButton.available.active {
+  opacity: 1;
+  border-color: #155724;
 }
 
 .statusButton.full {
@@ -165,6 +195,81 @@
 
 .statusButton.full:hover {
   background-color: #c82333;
+  opacity: 0.8;
+}
+
+.statusButton.full.active {
+  opacity: 1;
+  border-color: #721c24;
+}
+
+.sliderContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.sliderLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sliderValue {
+  color: #f5ae39;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #e9ecef 0%, #f5ae39 100%);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #f5ae39;
+  cursor: pointer;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #f5ae39;
+  cursor: pointer;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
 
 .statisticsSection {
@@ -1007,6 +1112,176 @@
   margin-top: 24px;
 }
 
+/* Waiting Management Section */
+.waitingManagementSection {
+  margin-top: 24px;
+}
+
+.waitingListContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.waitingListItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px 20px;
+  border: 1px solid #e9ecef;
+  transition: all 0.2s ease;
+}
+
+.waitingListItem:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.groupInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.groupId {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333333;
+}
+
+.groupDetails {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.peopleCount {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666666;
+}
+
+.statusBadge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.statusBadge.等待中 {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.statusBadge.已通知 {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.statusBadge.已過期 {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.waitTime {
+  font-size: 14px;
+  color: #666666;
+}
+
+.notifiedTime {
+  font-size: 13px;
+  color: #28a745;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.notifyButton {
+  padding: 8px 20px;
+  background-color: #f5ae39;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.notifyButton:hover {
+  background-color: #e69d28;
+}
+
+.notifyButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.skipButton {
+  padding: 8px 20px;
+  background-color: #ffffff;
+  color: #666666;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.skipButton:hover {
+  border-color: #dc3545;
+  color: #dc3545;
+  background-color: #fff5f5;
+}
+
+.skipButton:disabled {
+  background-color: #f8f9fa;
+  color: #cccccc;
+  border-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+.completeButton {
+  padding: 8px 20px;
+  background-color: #28a745;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.completeButton:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999999;
+  font-size: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px dashed #e9ecef;
+}
 .sendButton {
   padding: 14px 32px;
   background-color: #f5ae39;
