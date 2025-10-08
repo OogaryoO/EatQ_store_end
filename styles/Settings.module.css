@@ -1,0 +1,134 @@
+.settingsPage {
+  padding: 30px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.settingsHeader {
+  margin-bottom: 30px;
+}
+
+.settingsTitle {
+  font-size: 32px;
+  font-weight: 600;
+  color: #212529;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.settingsContent {
+  width: 100%;
+}
+
+.settingsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 1400px;
+}
+
+.infoCard {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+.infoCard:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.cardTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #212529;
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e9ecef;
+  font-family: 'Inter', sans-serif;
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f3f5;
+}
+
+.infoItem:last-child {
+  border-bottom: none;
+}
+
+.infoLabel {
+  font-size: 15px;
+  font-weight: 500;
+  color: #6c757d;
+  font-family: 'Inter', sans-serif;
+}
+
+.infoValue {
+  font-size: 15px;
+  font-weight: 400;
+  color: #212529;
+  text-align: right;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Status Colors */
+.statusNormal {
+  color: #28a745 !important;
+  font-weight: 600;
+}
+
+.statusChecking {
+  color: #ffc107 !important;
+  font-weight: 500;
+}
+
+.statusError {
+  color: #dc3545 !important;
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .settingsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .settingsPage {
+    padding: 20px;
+  }
+
+  .settingsTitle {
+    font-size: 24px;
+  }
+
+  .infoCard {
+    padding: 20px;
+  }
+
+  .cardTitle {
+    font-size: 18px;
+  }
+
+  .infoItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .infoValue {
+    text-align: left;
+  }
+}

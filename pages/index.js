@@ -15,18 +15,7 @@ import MenuManagementPage from '@/components/MenuManagementPage'
 import AnnouncementsPage from '@/components/AnnouncementsPage'
 import NotificationSendingPage from '@/components/NotificationSendingPage'
 import QRCodePage from '@/components/QRCodePage'
-
-// Settings Page Component
-const SettingsPage = () => (
-  <div className={styles.dashboardPage}>
-    <div className={styles.dashboardHeader}>
-      <h1 className={styles.dashboardTitle}>設定</h1>
-    </div>
-    <div className={styles.dashboardContent}>
-      <p>系統設定功能開發中...</p>
-    </div>
-  </div>
-)
+import SettingsPage from '@/components/SettingsPage'
 
 
 
