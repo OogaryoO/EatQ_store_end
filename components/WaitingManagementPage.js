@@ -1,8 +1,36 @@
 import Image from 'next/image'
+import { useState, useEffect } from 'react'
 import styles from '../styles/Dashboard.module.css'
 import { updateWaitingListStatus, removeFromWaitingList } from '../lib/firebaseService'
+import { database } from '../lib/firebase'
+import { ref, onValue, set } from 'firebase/database'
 
 const WaitingManagementPage = ({ waitingList, setWaitingList }) => {
+  const [isWaitingListEnabled, setIsWaitingListEnabled] = useState(true);
+  
+  // Listen for waiting list enabled/disabled status
+  useEffect(() => {
+    const waitingEnabledRef = ref(database, 'restaurant/waitingListEnabled');
+    const unsubscribe = onValue(waitingEnabledRef, (snapshot) => {
+      const status = snapshot.val();
+      if (status !== null) {
+        setIsWaitingListEnabled(status);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const toggleWaitingList = async () => {
+    try {
+      const newStatus = !isWaitingListEnabled;
+      await set(ref(database, 'restaurant/waitingListEnabled'), newStatus);
+      setIsWaitingListEnabled(newStatus);
+      console.log(`Waiting list ${newStatus ? 'enabled' : 'disabled'}`);
+    } catch (error) {
+      console.error('Failed to toggle waiting list:', error);
+    }
+  };
   
   const handleNotifyCustomer = async (customerId) => {
     try {
@@ -58,7 +86,19 @@ const WaitingManagementPage = ({ waitingList, setWaitingList }) => {
           />
         </div>
         <h1 className={styles.dashboardTitle}>候位清單</h1>
+        <button 
+          className={`${styles.toggleButton} ${isWaitingListEnabled ? styles.toggleEnabled : styles.toggleDisabled}`}
+          onClick={toggleWaitingList}
+        >
+          {isWaitingListEnabled ? '✓ 候位功能已啟用' : '✕ 候位功能已停用'}
+        </button>
       </div>
+      {!isWaitingListEnabled && (
+        <div className={styles.statusAlert}>
+          <span className={styles.alertIcon}>⚠️</span>
+          <span>候位功能目前已停用，顧客無法加入候位清單。點擊上方按鈕以啟用。</span>
+        </div>
+      )}
       <div className={styles.dashboardContent}>
         <div className={styles.waitingListSection}>
           <div className={styles.waitingListTable}>
