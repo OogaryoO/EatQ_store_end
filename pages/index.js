@@ -16,6 +16,7 @@ import AnnouncementsPage from '@/components/AnnouncementsPage'
 import NotificationSendingPage from '@/components/NotificationSendingPage'
 import QRCodePage from '@/components/QRCodePage'
 import SettingsPage from '@/components/SettingsPage'
+import AppLayoutPage from '@/components/AppLayoutPage'
 
 
 
@@ -49,6 +50,8 @@ const renderPageContent = (activeItem, isSeatingAvailable, setIsSeatingAvailable
       />
     case 'QR code':
       return <QRCodePage />
+    case 'App 版面':
+      return <AppLayoutPage />
     case '設定':
       return <SettingsPage />
     default:
@@ -78,6 +81,7 @@ export default function Home() {
     '公告活動',
     '公告發送',
     'QR code',
+    'App 版面',
     '設定'
   ]
 
