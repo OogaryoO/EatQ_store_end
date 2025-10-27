@@ -22,7 +22,10 @@ import AppLayoutPage from '@/components/AppLayoutPage'
 
 
 // Page Content Renderer
-const renderPageContent = (activeItem, isSeatingAvailable, setIsSeatingAvailable, waitingList, setWaitingList, waitingCount, averageWaitTime, lastNotificationTime, setActiveItem) => {
+const renderPageContent = (activeItem, isSeatingAvailable, setIsSeatingAvailable, waitingList, setWaitingList, waitingCount, averageWaitTime, lastNotificationTime, setActiveItem, isSidebarCollapsed) => {
+  // Special handling for App Layout page - remove padding
+  const isAppLayoutPage = activeItem === 'App 版面';
+  
   switch (activeItem) {
     case '控制台':
       return <DashboardPage 
@@ -72,6 +75,7 @@ export default function Home() {
   const [waitingCount, setWaitingCount] = useState(0)
   const [averageWaitTime, setAverageWaitTime] = useState(18)
   const [lastNotificationTime, setLastNotificationTime] = useState('13:42')
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   
   const menuItems = [
     '控制台',
@@ -148,20 +152,33 @@ export default function Home() {
       </Head>
 
       <div className={styles.appContainer}>
-        <div className={styles.sidebar}>
-          {menuItems.map((item) => (
-            <div
-              key={item}
-              className={`${styles.sidebarItem} ${activeItem === item ? styles.active : ''}`}
-              onClick={() => setActiveItem(item)}
-            >
-              {item}
-            </div>
-          ))}
-        </div>
+        <button 
+          className={styles.toggleSidebarButton}
+          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          title={isSidebarCollapsed ? "展開選單" : "收合選單"}
+        >
+          ☰
+        </button>
         
-        <div className={styles.mainContent}>    
-          {renderPageContent(activeItem, isSeatingAvailable, setIsSeatingAvailable, waitingList, setWaitingList, waitingCount, averageWaitTime, lastNotificationTime, setActiveItem)}
+        {!isSidebarCollapsed && (
+          <div className={styles.sidebar}>
+            {menuItems.map((item) => (
+              <div
+                key={item}
+                className={`${styles.sidebarItem} ${activeItem === item ? styles.active : ''}`}
+                onClick={() => setActiveItem(item)}
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        )}
+        
+        <div 
+          className={`${styles.mainContent} ${isSidebarCollapsed ? styles.mainContentCollapsed : ''}`}
+          style={activeItem === 'App 版面' ? { padding: 0, margin: 0, marginLeft: isSidebarCollapsed ? 0 : '250px' } : {}}
+        >    
+          {renderPageContent(activeItem, isSeatingAvailable, setIsSeatingAvailable, waitingList, setWaitingList, waitingCount, averageWaitTime, lastNotificationTime, setActiveItem, isSidebarCollapsed)}
         </div>
       </div>
     </>

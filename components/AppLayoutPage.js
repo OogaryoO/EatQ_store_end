@@ -73,6 +73,11 @@ const Icons = {
       <path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/>
     </svg>
   ),
+  Menu3Lines: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M3 12h18M3 6h18M3 18h18"/>
+    </svg>
+  ),
   Edit: () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -89,6 +94,25 @@ const Icons = {
   Move: () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/>
+    </svg>
+  ),
+  GripDots: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+      <circle cx="6" cy="6" r="1.5"/>
+      <circle cx="12" cy="6" r="1.5"/>
+      <circle cx="18" cy="6" r="1.5"/>
+      <circle cx="6" cy="12" r="1.5"/>
+      <circle cx="12" cy="12" r="1.5"/>
+      <circle cx="18" cy="12" r="1.5"/>
+      <circle cx="6" cy="18" r="1.5"/>
+      <circle cx="12" cy="18" r="1.5"/>
+      <circle cx="18" cy="18" r="1.5"/>
+    </svg>
+  ),
+  Cross: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6" y1="6" x2="18" y2="18"/>
     </svg>
   )
 };
@@ -354,6 +378,7 @@ export default function AppLayoutPage() {
   const [saveStatus, setSaveStatus] = useState('');
   const [leftPanelTab, setLeftPanelTab] = useState('modules'); // 'modules' or 'layout'
   const [selectedContainer, setSelectedContainer] = useState(null);
+  const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
 
   // Load existing layout from Firestore
   useEffect(() => {
@@ -644,7 +669,7 @@ export default function AppLayoutPage() {
   };
 
   // Render module preview
-  const renderModulePreview = (module, isInContainer = false) => {
+  const renderModulePreview = (module, isInContainer = false, parentContainerId = null) => {
     const previewStyles = {
       text: { minHeight: '60px', background: '#FFFFFF', border: '1px solid #E0E0E0', padding: '12px' },
       image: { height: '200px', background: '#F5F5F5', border: '2px dashed #BDBDBD' },
@@ -661,36 +686,46 @@ export default function AppLayoutPage() {
     const moduleInfo = AVAILABLE_MODULES.find(m => m.type === module.type);
     const IconComponent = moduleInfo && Icons[moduleInfo.icon];
 
+    // Handler to prevent hover propagation to parent containers
+    const handleModuleMouseEnter = (e) => {
+      if (isInContainer) {
+        e.stopPropagation();
+        e.currentTarget.classList.add(styles.directHover);
+      }
+    };
+
+    const handleModuleMouseLeave = (e) => {
+      if (isInContainer) {
+        e.stopPropagation();
+        e.currentTarget.classList.remove(styles.directHover);
+      }
+    };
+
     return (
       <div 
         className={styles.modulePreviewItem} 
         style={previewStyles[module.type] || {}}
         onClick={() => isInContainer && handleEditModule(module)}
+        onMouseEnter={handleModuleMouseEnter}
+        onMouseLeave={handleModuleMouseLeave}
       >
-        <span className={styles.moduleIcon}>
-          {IconComponent && <IconComponent />}
-        </span>
-        {module.type === 'text' && module.content ? (
-          <div className={styles.textContent}>{module.content}</div>
-        ) : module.type === 'image' && module.content ? (
-          <img src={module.content} alt="Module" className={styles.moduleImage} />
-        ) : (
-          <span className={styles.moduleName}>{moduleInfo?.name}</span>
-        )}
         {isInContainer && (
-          <>
+          <div className={styles.moduleHoverBar}>
             <button
-              className={styles.moveButton}
+              className={styles.moduleMoveButton}
               draggable="true"
-              onDragStart={(e) => handleItemDragStart(e, module)}
+              onDragStart={(e) => {
+                // Drag the module itself for reordering within container
+                handleItemDragStart(e, module);
+              }}
               onDragEnd={handleItemDragEnd}
               onClick={(e) => e.stopPropagation()}
               title="移動模組"
             >
-              <Icons.Move />
+              <Icons.GripDots />
             </button>
             <button
-              className={styles.editButton}
+              className={styles.moduleEditButton}
               onClick={(e) => {
                 e.stopPropagation();
                 handleEditModule(module);
@@ -700,15 +735,31 @@ export default function AppLayoutPage() {
               <Icons.Edit />
             </button>
             <button
-              className={styles.removeButton}
+              className={styles.moduleDeleteButton}
               onClick={(e) => {
                 e.stopPropagation();
+                // Delete only the module, not the container
                 handleRemoveModule(module.id);
               }}
-              title="移除模組"
+              title="刪除模組"
             >
-              <Icons.Delete />
+              <Icons.Cross />
             </button>
+          </div>
+        )}
+        
+        {/* Show only content for text and image modules when they have content */}
+        {module.type === 'text' && module.content ? (
+          <div className={styles.textContent}>{module.content}</div>
+        ) : module.type === 'image' && module.content ? (
+          <img src={module.content} alt="Module" className={styles.moduleImage} />
+        ) : (
+          // Show icon and name for modules without content or non-text/image modules
+          <>
+            <span className={styles.moduleIcon}>
+              {IconComponent && <IconComponent />}
+            </span>
+            <span className={styles.moduleName}>{moduleInfo?.name}</span>
           </>
         )}
       </div>
@@ -719,13 +770,33 @@ export default function AppLayoutPage() {
   const renderContainer = (container, isInContainer = false, isPreview = false) => {
     const hasContainerChildren = container.children?.some(child => child.type === 'container');
     const containerChildren = container.children?.filter(child => child.type === 'container') || [];
+    const isEmpty = !container.children || container.children.length === 0;
+    
+    // Handler to prevent hover propagation to parent containers
+    const handleContainerMouseEnter = (e) => {
+      if (!isPreview && isInContainer && isEmpty) {
+        e.stopPropagation();
+        // Add a class to show the hover bar only for this specific container
+        e.currentTarget.classList.add(styles.directHover);
+      }
+    };
+
+    const handleContainerMouseLeave = (e) => {
+      if (!isPreview && isInContainer && isEmpty) {
+        e.stopPropagation();
+        // Remove the class when mouse leaves
+        e.currentTarget.classList.remove(styles.directHover);
+      }
+    };
     
     return (
       <div 
         key={container.id} 
-        className={`${styles.containerWrapper} ${dropTargetContainer === container.id ? styles.dragOver : ''} ${isPreview ? styles.previewMode : ''} ${selectedContainer === container.id ? styles.selectedContainer : ''}`}
+        className={`${styles.containerWrapper} ${hasContainerChildren ? styles.hasNestedContainer : ''} ${dropTargetContainer === container.id ? styles.dragOver : ''} ${isPreview ? styles.previewMode : ''} ${selectedContainer === container.id ? styles.selectedContainer : ''}`}
         onDragOver={(e) => !isPreview && handleContainerDragOver(e, container.id)}
         onDrop={(e) => !isPreview && handleContainerDrop(e, container.id)}
+        onMouseEnter={handleContainerMouseEnter}
+        onMouseLeave={handleContainerMouseLeave}
         onClick={(e) => {
           if (!isPreview) {
             e.stopPropagation();
@@ -733,32 +804,30 @@ export default function AppLayoutPage() {
           }
         }}
       >
-        <div className={styles.containerHeader}>
-          {!isPreview && isInContainer && (
+        {!isPreview && isInContainer && isEmpty && (
+          <div className={styles.containerHoverBar}>
             <button
-              className={styles.moveButton}
+              className={styles.hoverMoveButton}
               draggable="true"
               onDragStart={(e) => handleItemDragStart(e, container)}
               onDragEnd={handleItemDragEnd}
               onClick={(e) => e.stopPropagation()}
               title="移動容器"
             >
-              <Icons.Move />
+              <Icons.GripDots />
             </button>
-          )}
-          {!isPreview && (
             <button
-              className={styles.removeContainerButton}
+              className={styles.hoverDeleteButton}
               onClick={(e) => {
                 e.stopPropagation();
                 handleRemoveContainer(container.id);
               }}
-              title="移除容器"
+              title="刪除容器"
             >
-              <Icons.Delete />
+              <Icons.Cross />
             </button>
-          )}
-        </div>
+          </div>
+        )}
         <div 
           className={styles.containerContent}
           style={{
@@ -801,136 +870,130 @@ export default function AppLayoutPage() {
 
   return (
     <div className={styles.container}>
-      {/* Header */}
-      <div className={styles.header}>
-        <h1 className={styles.title}>App 版面設計</h1>
+      {/* Compact Header with Tabs - No Toggle Button */}
+      <div className={styles.compactHeader}>
+        <div className={styles.topBarTabs}>
+          <button
+            className={`${styles.topBarTab} ${activeTab === 'design' ? styles.activeTopTab : ''}`}
+            onClick={() => setActiveTab('design')}
+          >
+            設計
+          </button>
+          <button
+            className={`${styles.topBarTab} ${activeTab === 'preview' ? styles.activeTopTab : ''}`}
+            onClick={() => setActiveTab('preview')}
+          >
+            預覽
+          </button>
+        </div>
+
         <div className={styles.headerActions}>
           <button
             className={`${styles.saveButton} ${isSaving ? styles.saving : ''}`}
             onClick={saveLayout}
             disabled={isSaving}
           >
-            {isSaving ? '儲存中...' : '💾 儲存設定'}
+            {isSaving ? '儲存中...' : '儲存'}
           </button>
           {saveStatus && <span className={styles.saveStatus}>{saveStatus}</span>}
         </div>
       </div>
 
-      {/* Tab Navigation */}
-      <div className={styles.tabNavigation}>
-        <button
-          className={`${styles.tab} ${activeTab === 'design' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('design')}
-        >
-          🎨 設計
-        </button>
-        <button
-          className={`${styles.tab} ${activeTab === 'preview' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('preview')}
-        >
-          👁️ 預覽
-        </button>
-      </div>
-
       {/* Main Content */}
-      <div className={styles.content}>
+      <div className={styles.mainContent}>
         {activeTab === 'design' ? (
           <div className={styles.designView}>
             {/* Left Panel - Available Modules */}
             <div className={styles.leftPanel}>
-              <div className={styles.leftPanelTabs}>
-                <button
-                  className={`${styles.leftPanelTab} ${leftPanelTab === 'modules' ? styles.activeLeftTab : ''}`}
-                  onClick={() => setLeftPanelTab('modules')}
-                >
-                  可用模組
-                </button>
-                <button
-                  className={`${styles.leftPanelTab} ${leftPanelTab === 'layout' ? styles.activeLeftTab : ''}`}
-                  onClick={() => setLeftPanelTab('layout')}
-                >
-                  版面調整
-                </button>
-              </div>
+                <div className={styles.leftPanelTabs}>
+                  <button
+                    className={`${styles.leftPanelTab} ${leftPanelTab === 'modules' ? styles.activeLeftTab : ''}`}
+                    onClick={() => setLeftPanelTab('modules')}
+                  >
+                    可用模組
+                  </button>
+                  <button
+                    className={`${styles.leftPanelTab} ${leftPanelTab === 'layout' ? styles.activeLeftTab : ''}`}
+                    onClick={() => setLeftPanelTab('layout')}
+                  >
+                    版面調整
+                  </button>
+                </div>
 
-              {leftPanelTab === 'modules' ? (
-                <>
-                  <p className={styles.panelSubtitle}>拖曳模組到容器中</p>
-                  <div className={styles.moduleList}>
-                    {AVAILABLE_MODULES.map((module) => {
-                      const IconComponent = Icons[module.icon];
-                      return (
-                        <div
-                          key={module.id}
-                          className={styles.moduleItem}
-                          draggable
-                          onDragStart={(e) => handleDragStart(e, module)}
-                        >
-                          <span className={styles.moduleIcon}>
-                            {IconComponent && <IconComponent />}
-                          </span>
-                          <span className={styles.moduleName}>{module.name}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p className={styles.panelSubtitle}>點選容器後調整排列方式</p>
-                  <div className={styles.layoutControlsPanel}>
-                    {selectedContainer ? (
-                      <>
-                        <div className={styles.layoutControlGroup}>
-                          <label className={styles.layoutControlLabel}>容器排列方式</label>
-                          <div className={styles.alignmentButtonGroup}>
-                            <button
-                              className={`${styles.alignmentControlButton} ${
-                                layout.containers.find(c => c.id === selectedContainer)?.alignment === 'vertical' ||
-                                findContainerById(layout.containers, selectedContainer)?.alignment === 'vertical'
-                                  ? styles.active : ''
-                              }`}
-                              onClick={() => handleAlignmentChange(selectedContainer, 'vertical')}
-                              title="垂直排列"
-                            >
-                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M12 5v14M5 12l7 7 7-7"/>
-                              </svg>
-                              <span>垂直排列</span>
-                            </button>
-                            <button
-                              className={`${styles.alignmentControlButton} ${
-                                layout.containers.find(c => c.id === selectedContainer)?.alignment === 'horizontal' ||
-                                findContainerById(layout.containers, selectedContainer)?.alignment === 'horizontal'
-                                  ? styles.active : ''
-                              }`}
-                              onClick={() => handleAlignmentChange(selectedContainer, 'horizontal')}
-                              title="水平排列"
-                            >
-                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                              </svg>
-                              <span>水平排列</span>
-                            </button>
+                {leftPanelTab === 'modules' ? (
+                  <>
+                    <p className={styles.panelSubtitle}>拖曳模組到容器中</p>
+                    <div className={styles.moduleList}>
+                      {AVAILABLE_MODULES.map((module) => {
+                        const IconComponent = Icons[module.icon];
+                        return (
+                          <div
+                            key={module.id}
+                            className={styles.moduleItem}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, module)}
+                          >
+                            <span className={styles.moduleIcon}>
+                              {IconComponent && <IconComponent />}
+                            </span>
+                            <span className={styles.moduleName}>{module.name}</span>
                           </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className={styles.panelSubtitle}>點選容器後調整排列方式</p>
+                    <div className={styles.layoutControlsPanel}>
+                      {selectedContainer ? (
+                        <>
+                          <div className={styles.layoutControlGroup}>
+                            <label className={styles.layoutControlLabel}>容器排列方式</label>
+                            <div className={styles.alignmentButtonGroup}>
+                              <button
+                                className={`${styles.alignmentControlButton} ${
+                                  layout.containers.find(c => c.id === selectedContainer)?.alignment === 'vertical' ||
+                                  findContainerById(layout.containers, selectedContainer)?.alignment === 'vertical'
+                                    ? styles.active : ''
+                                }`}
+                                onClick={() => handleAlignmentChange(selectedContainer, 'vertical')}
+                                title="垂直排列"
+                              >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M12 5v14M5 12l7 7 7-7"/>
+                                </svg>
+                                <span>垂直排列</span>
+                              </button>
+                              <button
+                                className={`${styles.alignmentControlButton} ${
+                                  layout.containers.find(c => c.id === selectedContainer)?.alignment === 'horizontal' ||
+                                  findContainerById(layout.containers, selectedContainer)?.alignment === 'horizontal'
+                                    ? styles.active : ''
+                                }`}
+                                onClick={() => handleAlignmentChange(selectedContainer, 'horizontal')}
+                                title="水平排列"
+                              >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                                <span>水平排列</span>
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <div className={styles.noSelectionMessage}>
+                          <p>請先在右側選擇一個容器</p>
                         </div>
-                      </>
-                    ) : (
-                      <div className={styles.noSelectionMessage}>
-                        <p>請先在右側選擇一個容器</p>
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
 
             {/* Right Panel - Mobile Mockup */}
             <div className={styles.rightPanel}>
-              <div className={styles.panelHeader}>
-                <h2 className={styles.panelTitle}>手機預覽</h2>
-                <div className={styles.panelHint}>拖曳容器模組到此處</div>
-              </div>
               <div className={styles.mockupContainer}>
                 <div className={styles.phoneMockup}>
                   <div className={styles.phoneNotch}></div>
@@ -958,7 +1021,6 @@ export default function AppLayoutPage() {
         ) : (
           <div className={styles.previewView}>
             <div className={styles.previewContainer}>
-              <h2 className={styles.panelTitle}>即時預覽</h2>
               <p className={styles.previewSubtitle}>這是顧客在 App 中看到的版面</p>
               <div className={styles.mockupContainer}>
                 <div className={styles.phoneMockup}>

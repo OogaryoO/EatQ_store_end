@@ -3,51 +3,108 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f8f9fa;
+  background: white;
   overflow: hidden;
 }
 
-/* Header */
-.header {
+/* Compact Header */
+.compactHeader {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 20px 30px;
+  justify-content: flex-end;
+  gap: 15px;
+  padding: 6px 15px;
   background: white;
   border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  height: 44px;
+  flex-shrink: 0;
+  z-index: 10;
+  position: relative;
 }
 
-.title {
-  font-size: 24px;
-  font-weight: 700;
+.togglePanelButton {
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #666;
+  flex-shrink: 0;
+}
+
+.togglePanelButton:hover {
+  background: #f5f5f5;
+  border-color: #2196F3;
+  color: #2196F3;
+}
+
+.togglePanelButton svg {
+  width: 20px;
+  height: 20px;
+}
+
+.topBarTabs {
+  display: flex;
+  gap: 6px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.topBarTab {
+  padding: 6px 20px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.topBarTab:hover {
+  background: #f5f5f5;
   color: #333;
-  margin: 0;
+}
+
+.topBarTab.activeTopTab {
+  background: #e3f2fd;
+  color: #2196F3;
 }
 
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .saveButton {
-  padding: 10px 24px;
+  padding: 6px 14px;
   background: #4CAF50;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 6px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+  white-space: nowrap;
 }
 
 .saveButton:hover {
   background: #45a049;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.4);
 }
 
 .saveButton:disabled {
@@ -61,7 +118,7 @@
 }
 
 .saveStatus {
-  font-size: 14px;
+  font-size: 12px;
   color: #4CAF50;
   font-weight: 500;
   animation: fadeIn 0.3s ease;
@@ -76,69 +133,38 @@
   }
 }
 
-/* Tab Navigation */
-.tabNavigation {
-  display: flex;
-  gap: 0;
-  padding: 0 30px;
-  background: white;
-  border-bottom: 2px solid #e0e0e0;
-}
-
-.tab {
-  padding: 15px 30px;
-  background: transparent;
-  border: none;
-  border-bottom: 3px solid transparent;
-  font-size: 16px;
-  font-weight: 600;
-  color: #666;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.tab:hover {
-  color: #333;
-  background: #f5f5f5;
-}
-
-.activeTab {
-  color: #2196F3;
-  border-bottom-color: #2196F3;
-  background: #f0f8ff;
-}
-
-/* Main Content */
-.content {
+/* Main Content - Full Screen */
+.mainContent {
   flex: 1;
-  overflow: auto;
-  padding: 30px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: white;
 }
 
 /* Design View */
 .designView {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 30px;
+  display: flex;
   height: 100%;
+  overflow: hidden;
 }
 
 /* Left Panel */
 .leftPanel {
+  width: 300px;
   background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
+  border-right: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .leftPanelTabs {
   display: flex;
   gap: 0;
-  margin-bottom: 15px;
   border-bottom: 2px solid #e0e0e0;
+  flex-shrink: 0;
 }
 
 .leftPanelTab {
@@ -175,7 +201,18 @@
 .panelSubtitle {
   font-size: 13px;
   color: #666;
-  margin: 0 0 20px 0;
+  margin: 0;
+  padding: 15px 20px 10px 20px;
+  flex-shrink: 0;
+}
+
+.moduleList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px 20px 20px 20px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 /* Layout Controls Panel */
@@ -183,7 +220,9 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding-top: 10px;
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .layoutControlGroup {
@@ -303,12 +342,11 @@
 
 /* Right Panel */
 .rightPanel {
+  flex: 1;
   background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .panelHeader {
@@ -347,28 +385,30 @@
   justify-content: center;
   align-items: center;
   padding: 20px;
+  overflow: auto;
 }
 
 /* Phone Mockup */
 .phoneMockup {
-  width: 375px;
-  height: 667px;
+  width: 320px;
+  height: 600px;
   background: #1a1a1a;
-  border-radius: 40px;
-  padding: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  border-radius: 32px;
+  padding: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   position: relative;
+  flex-shrink: 0;
 }
 
 .phoneNotch {
   position: absolute;
-  top: 12px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  width: 150px;
-  height: 30px;
+  width: 120px;
+  height: 24px;
   background: #1a1a1a;
-  border-radius: 0 0 20px 20px;
+  border-radius: 0 0 16px 16px;
   z-index: 10;
 }
 
@@ -376,14 +416,14 @@
   width: 100%;
   height: 100%;
   background: white;
-  border-radius: 30px;
+  border-radius: 24px;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
 }
 
 .phoneScreen::-webkit-scrollbar {
-  width: 4px;
+  width: 3px;
 }
 
 .phoneScreen::-webkit-scrollbar-track {
@@ -398,11 +438,11 @@
 
 .phoneHomeIndicator {
   position: absolute;
-  bottom: 8px;
+  bottom: 6px;
   left: 50%;
   transform: translateX(-50%);
-  width: 120px;
-  height: 4px;
+  width: 100px;
+  height: 3px;
   background: #666;
   border-radius: 2px;
 }
@@ -461,20 +501,32 @@
   flex-direction: column;
   gap: 12px;
   padding: 10px;
+  padding-top: 45px; /* Add extra padding at top to prevent phone notch from blocking hover icons */
 }
 
 .containerWrapper {
-  background: #f8f9fa;
-  border: 2px solid #e0e0e0;
+  background: transparent;
+  border: none;
   border-radius: 8px;
-  padding: 12px;
+  padding: 0;
   transition: all 0.3s ease;
   margin-bottom: 8px;
   position: relative;
+  padding-top: 0;
+}
+
+/* When container has nested containers inside, show border with padding */
+.containerWrapper.hasNestedContainer {
+  border: 2px dashed #BDBDBD;
+  padding: 12px;
+  padding-top: 24px;
+  gap: 8px;
 }
 
 .containerWrapper.selectedContainer {
-  border-color: #2196F3;
+  border: 2px dashed #2196F3;
+  padding: 12px;
+  padding-top: 24px;
   box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
 }
 
@@ -482,70 +534,108 @@
   border-color: transparent;
   background: transparent;
   padding: 0;
+  padding-top: 0;
 }
 
-.containerWrapper.previewMode .containerHeader {
+.containerWrapper.previewMode .containerHoverBar {
   display: none;
 }
 
 .containerWrapper.dragOver {
   background: #e3f2fd;
-  border-color: #2196F3;
+  border: 2px dashed #2196F3;
+  padding: 12px;
+  padding-top: 24px;
   box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
 }
 
-.containerHeader {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-bottom: 8px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #ddd;
-  position: relative;
-  min-height: 30px;
-}
-
-.containerLabel {
-  font-size: 12px;
-  font-weight: 600;
-  color: #666;
-}
-
-.containerControls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.removeContainerButton {
-  width: 24px;
-  height: 24px;
+/* New Hover Bar */
+.containerHoverBar {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
   background: transparent;
-  color: #f44336;
-  border: none;
-  cursor: pointer;
-  border-radius: 50%;
-  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   opacity: 0;
-  padding: 0;
+  transition: all 0.2s ease;
+  z-index: 5;
+  pointer-events: none;
 }
 
-.removeContainerButton svg {
-  width: 16px;
-  height: 16px;
-  stroke: currentColor;
+.containerHoverBar button {
+  pointer-events: auto;
 }
 
-.containerWrapper:hover .removeContainerButton {
+/* Only show hover bar when directly hovered */
+.containerWrapper.directHover > .containerHoverBar {
   opacity: 1;
+  background: #f5ae39;
 }
 
-.removeContainerButton:hover {
-  background: #ffebee;
+.hoverMoveButton,
+.hoverDeleteButton {
+  width: 24px;
+  height: 24px;
+  background: #f5ae39;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: all 0.2s ease;
+  position: relative;
+  top: -11px;
+}
+
+.hoverMoveButton {
+  cursor: grab;
+}
+
+.hoverMoveButton:active {
+  cursor: grabbing;
+}
+
+.hoverMoveButton svg,
+.hoverDeleteButton svg {
+  width: 14px;
+  height: 14px;
+  fill: white;
+}
+
+.hoverDeleteButton svg {
+  stroke: white;
+  fill: none;
+}
+
+.hoverMoveButton:hover,
+.hoverDeleteButton:hover {
+  background: #e09a1f;
   transform: scale(1.1);
+}
+
+/* Deprecated styles - kept for backward compatibility */
+.containerHeader {
+  display: none;
+}
+
+.containerLabel {
+  display: none;
+}
+
+.containerControls {
+  display: none;
+}
+
+.removeContainerButton {
+  display: none;
 }
 
 .containerContent {
@@ -591,11 +681,11 @@
   padding: 20px;
   border-radius: 8px;
   transition: all 0.2s ease;
+  padding-top: 32px;
 }
 
 .modulePreviewItem:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .modulePreviewItem .moduleIcon {
@@ -615,113 +705,86 @@
   color: #333;
 }
 
-.moveButton {
+/* Module Hover Bar - Similar to Container */
+.moduleHoverBar {
   position: absolute;
-  top: 8px;
-  left: 8px;
-  width: 24px;
-  height: 24px;
-  background: #9E9E9E;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  cursor: grab;
+  top: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  gap: 8px;
   opacity: 0;
   transition: all 0.2s ease;
   z-index: 10;
+  pointer-events: none;
 }
 
-.moveButton svg {
-  width: 14px;
-  height: 14px;
-  stroke: white;
+.moduleHoverBar button {
+  pointer-events: auto;
 }
 
-.modulePreviewItem:hover .moveButton,
-.containerWrapper:hover > .containerHeader .moveButton {
+.modulePreviewItem.directHover > .moduleHoverBar {
   opacity: 1;
+  background: #f5ae39;
 }
 
-.moveButton:hover {
-  background: #757575;
-  transform: scale(1.1);
+.moduleMoveButton,
+.moduleEditButton,
+.moduleDeleteButton {
+  width: 24px;
+  height: 24px;
+  background: #f5ae39;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: all 0.2s ease;
+  position: relative;
+  top: -11px;
 }
 
-.moveButton:active {
+.moduleMoveButton {
+  cursor: grab;
+}
+
+.moduleMoveButton:active {
   cursor: grabbing;
 }
 
-.editButton {
-  position: absolute;
-  top: 8px;
-  right: 40px;
-  width: 24px;
-  height: 24px;
-  background: #2196F3;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  opacity: 0;
-  transition: all 0.2s ease;
-  z-index: 10;
-}
-
-.editButton svg {
+.moduleMoveButton svg,
+.moduleEditButton svg,
+.moduleDeleteButton svg {
   width: 14px;
   height: 14px;
+  fill: white;
+}
+
+.moduleEditButton svg,
+.moduleDeleteButton svg {
   stroke: white;
+  fill: none;
 }
 
-.modulePreviewItem:hover .editButton {
-  opacity: 1;
-}
-
-.editButton:hover {
-  background: #1976D2;
+.moduleMoveButton:hover,
+.moduleEditButton:hover,
+.moduleDeleteButton:hover {
+  background: #e09a1f;
   transform: scale(1.1);
 }
 
+/* Deprecated - kept for backward compatibility */
+.moveButton,
+.editButton,
 .removeButton {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 24px;
-  height: 24px;
-  background: #f44336;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  opacity: 0;
-  transition: all 0.2s ease;
-}
-
-.removeButton svg {
-  width: 14px;
-  height: 14px;
-  stroke: white;
-}
-
-.modulePreviewItem:hover .removeButton {
-  opacity: 1;
-}
-
-.removeButton:hover {
-  background: #d32f2f;
-  transform: scale(1.1);
+  display: none;
 }
 
 .dropZone {
@@ -758,13 +821,19 @@
   white-space: pre-wrap;
   word-break: break-word;
   width: 100%;
-  text-align: left;
+  text-align: center;
+  padding: 0;
 }
 
 .moduleImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 8px;
+  z-index: 0;
 }
 
 /* Preview View */
@@ -772,24 +841,26 @@
   height: 100%;
   display: flex;
   justify-content: center;
+  overflow: hidden;
 }
 
 .previewContainer {
   width: 100%;
   max-width: 600px;
   background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .previewSubtitle {
   font-size: 13px;
   color: #666;
-  margin: 0 0 20px 0;
+  margin: 0;
+  padding: 15px 20px;
   text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
 }
 
 .previewModuleList {
