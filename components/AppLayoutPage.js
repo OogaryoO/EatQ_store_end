@@ -1,6 +1,7 @@
 import { useState, useReducer, useEffect } from 'react';
-import { firestore } from '../lib/firebase';
+import { firestore, storage } from '../lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import styles from '../styles/AppLayout.module.css';
 
 // SVG Icons as components
@@ -376,6 +377,8 @@ export default function AppLayoutPage() {
   const [editingModule, setEditingModule] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState('');
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportStatus, setExportStatus] = useState('');
   const [leftPanelTab, setLeftPanelTab] = useState('modules'); // 'modules' or 'layout'
   const [selectedContainer, setSelectedContainer] = useState(null);
   const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
@@ -422,6 +425,33 @@ export default function AppLayoutPage() {
       setSaveStatus('儲存失敗，請重試');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // Export layout JSON to Firebase Storage (single file for Flutter app)
+  const exportLayoutToStorage = async () => {
+    setIsExporting(true);
+    setExportStatus('');
+    try {
+      const json = JSON.stringify(layout, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      
+      // Use a fixed filename so Flutter always knows where to fetch from
+      const filename = 'current_layout.json';
+      const storageReference = storageRef(storage, `app_layouts/${filename}`);
+
+      // This will overwrite the existing file
+      await uploadBytes(storageReference, blob);
+      const url = await getDownloadURL(storageReference);
+
+      setExportStatus(`匯出成功！Flutter 可從此網址讀取: ${url}`);
+      // Keep the link visible longer since it's for Flutter integration
+      setTimeout(() => setExportStatus(''), 20000);
+    } catch (error) {
+      console.error('Error exporting layout JSON:', error);
+      setExportStatus('匯出失敗，請重試');
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -895,7 +925,17 @@ export default function AppLayoutPage() {
           >
             {isSaving ? '儲存中...' : '儲存'}
           </button>
+          <button
+            className={`${styles.saveButton} ${isExporting ? styles.saving : ''}`}
+            onClick={exportLayoutToStorage}
+            disabled={isExporting}
+            style={{ marginLeft: '8px' }}
+            title="匯出至 Storage 供 Flutter 讀取 (可選)"
+          >
+            {isExporting ? '匯出中...' : '同步至 Storage'}
+          </button>
           {saveStatus && <span className={styles.saveStatus}>{saveStatus}</span>}
+          {exportStatus && <span className={styles.saveStatus} style={{ marginLeft: '8px' }}>{exportStatus}</span>}
         </div>
       </div>
 
